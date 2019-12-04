@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class RegionController @Autowired constructor(
-        private val regionRepository: RegionRepository
+    private val regionRepository: RegionRepository
 ) {
 
     @GetMapping("/regions")
     fun getRegions(): List<Region> =
-            regionRepository.get()
+        regionRepository.get()
 
 }

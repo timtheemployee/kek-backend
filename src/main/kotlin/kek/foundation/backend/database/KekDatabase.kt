@@ -4,11 +4,12 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-class KekDatabase: Datasource {
+class KekDatabase : Datasource {
 
     companion object {
 
     }
+
     private val connection: Connection
 
     init {

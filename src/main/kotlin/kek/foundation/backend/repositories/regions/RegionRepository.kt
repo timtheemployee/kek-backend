@@ -9,7 +9,7 @@ interface RegionRepository {
 
 class RegionRepositoryImpl @Autowired constructor(
     private val datasource: Datasource
-): RegionRepository {
+) : RegionRepository {
 
     private companion object {
         const val REGION_ID = "regioncode"
@@ -22,10 +22,10 @@ class RegionRepositoryImpl @Autowired constructor(
 
         while (resultSet.next()) {
             regions.add(
-                    Region(
-                            resultSet.getLong(REGION_ID),
-                            resultSet.getString(REGION_NAME)
-                    )
+                Region(
+                    resultSet.getLong(REGION_ID),
+                    resultSet.getString(REGION_NAME)
+                )
             )
         }
 

@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class CountryFilterController @Autowired constructor (
-        private val countryRepository: CountryRepository
+class CountryFilterController @Autowired constructor(
+    private val countryRepository: CountryRepository
 ) {
 
     @GetMapping("/countries")
     fun greeting(): List<Country> =
-            countryRepository.get()
+        countryRepository.get()
 
 }

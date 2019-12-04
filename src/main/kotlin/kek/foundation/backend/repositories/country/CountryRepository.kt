@@ -8,8 +8,8 @@ interface CountryRepository {
 }
 
 class CountryRepositoryImpl @Autowired constructor(
-        private val datasource: Datasource
-): CountryRepository {
+    private val datasource: Datasource
+) : CountryRepository {
 
     private companion object {
         const val COUNTRY_ID = "countrycode"
@@ -22,10 +22,10 @@ class CountryRepositoryImpl @Autowired constructor(
 
         while (resultSet.next()) {
             countries.add(
-                    Country(
-                            resultSet.getLong(COUNTRY_ID),
-                            resultSet.getString(COUNTRY_NAME)
-                    )
+                Country(
+                    resultSet.getLong(COUNTRY_ID),
+                    resultSet.getString(COUNTRY_NAME)
+                )
             )
         }
 

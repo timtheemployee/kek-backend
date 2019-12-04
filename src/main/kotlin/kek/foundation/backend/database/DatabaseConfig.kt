@@ -11,5 +11,5 @@ class DatabaseConfig {
     @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     @Bean
     fun provideDataSource(): Datasource =
-            KekDatabase()
+        KekDatabase()
 }

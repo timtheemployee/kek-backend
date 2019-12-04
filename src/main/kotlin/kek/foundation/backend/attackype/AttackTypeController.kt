@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class AttackTypeController @Autowired constructor(
-        private val attackTypeRepository: AttackTypeRepository
+    private val attackTypeRepository: AttackTypeRepository
 ) {
 
     @GetMapping("/attack-types")
     fun getAttackTypes(): List<AttackType> =
-            attackTypeRepository.get()
+        attackTypeRepository.get()
 }

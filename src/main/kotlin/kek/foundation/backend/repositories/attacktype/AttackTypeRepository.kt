@@ -8,8 +8,8 @@ interface AttackTypeRepository {
 }
 
 class AttackTypeRepositoryImpl @Autowired constructor(
-        private val datasource: Datasource
-): AttackTypeRepository {
+    private val datasource: Datasource
+) : AttackTypeRepository {
 
     private companion object {
         const val ATTACK_TYPE_ID = "attacktype"
@@ -23,10 +23,10 @@ class AttackTypeRepositoryImpl @Autowired constructor(
 
         while (result.next()) {
             countries.add(
-                    AttackType(
-                            result.getLong(ATTACK_TYPE_ID),
-                            result.getString(ATTACK_TYPE_DESCRIPTION)
-                    )
+                AttackType(
+                    result.getLong(ATTACK_TYPE_ID),
+                    result.getString(ATTACK_TYPE_DESCRIPTION)
+                )
             )
         }
 

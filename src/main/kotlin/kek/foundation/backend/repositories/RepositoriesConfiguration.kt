@@ -5,6 +5,8 @@ import kek.foundation.backend.repositories.attacktype.AttackTypeRepository
 import kek.foundation.backend.repositories.attacktype.AttackTypeRepositoryImpl
 import kek.foundation.backend.repositories.country.CountryRepository
 import kek.foundation.backend.repositories.country.CountryRepositoryImpl
+import kek.foundation.backend.repositories.filters.FiltersRepository
+import kek.foundation.backend.repositories.filters.FiltersRepositoryImpl
 import kek.foundation.backend.repositories.regions.RegionRepository
 import kek.foundation.backend.repositories.regions.RegionRepositoryImpl
 import org.springframework.context.annotation.Bean
@@ -15,13 +17,17 @@ class RepositoriesConfiguration {
 
     @Bean
     fun provideCountryRepository(datasource: Datasource): CountryRepository =
-            CountryRepositoryImpl(datasource)
+        CountryRepositoryImpl(datasource)
 
     @Bean
     fun provideAttackTypeRepository(datasource: Datasource): AttackTypeRepository =
-            AttackTypeRepositoryImpl(datasource)
+        AttackTypeRepositoryImpl(datasource)
 
     @Bean
     fun provideRegionsRepository(datasource: Datasource): RegionRepository =
-            RegionRepositoryImpl(datasource)
+        RegionRepositoryImpl(datasource)
+
+    @Bean
+    fun provideFilterRepository(datasource: Datasource): FiltersRepository =
+        FiltersRepositoryImpl(datasource)
 }
