@@ -78,34 +78,42 @@ class FiltersRepositoryImpl @Autowired constructor(
         return events
     }
 
-    private fun joinToString(list: List<Int>): String =
-        list.joinToString(", ")
+    private fun joinToString(list: List<Int>?): String? =
+        list?.joinToString(", ")
 
-    private fun joinToString(bool: Boolean): String =
-        if (bool) "1" else "0"
+    private fun joinToString(flag: Boolean?): String? =
+        if(flag != null) {
+            if(flag) {
+                "1"
+            } else {
+                "0"
+            }
+        } else {
+            null
+        }
 
     private fun createQuery(
         maxYear: String,
         minYear: String,
-        isExtended: String,
-        countries: String,
-        regions: String,
-        isSuccess: String,
-        isSuicide: String,
-        attackTypes: String,
-        targetTypes: String,
-        groupsId: String
+        isExtended: String?,
+        countries: String?,
+        regions: String?,
+        isSuccess: String?,
+        isSuicide: String?,
+        attackTypes: String?,
+        targetTypes: String?,
+        groupsId: String?
     ): String {
         val conditions = arrayListOf<String>().apply {
-            add(onCondition(true, doReturn = "($YEAR > $minYear and $YEAR < $maxYear)"))
-            add(onCondition(true, doReturn = "($EXTENDED = $isExtended)"))
-            add(onCondition(countries.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
-            add(onCondition(regions.isNotEmpty(), doReturn = "($REGIONS in ($regions))"))
-            add(onCondition(true, doReturn = "($SUCCESS = $isSuccess)"))
-            add(onCondition(true, doReturn = "($SUICIDE = $isSuicide)"))
-            add(onCondition(attackTypes.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes))"))
-            add(onCondition(targetTypes.isNotEmpty(), doReturn = "($TARGET_TYPE in ($targetTypes))"))
-            add(onCondition(groupsId.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)"))
+            add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR > $minYear and $YEAR < $maxYear)"))
+            add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
+            add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
+            add(onCondition(regions?.isNotEmpty(), doReturn = "($REGIONS in ($regions))"))
+            add(onCondition(isSuccess?.isNotEmpty(), doReturn = "($SUCCESS = $isSuccess)"))
+            add(onCondition(isSuicide?.isNotEmpty(), doReturn = "($SUICIDE = $isSuicide)"))
+            add(onCondition(attackTypes?.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes))"))
+            add(onCondition(targetTypes?.isNotEmpty(), doReturn = "($TARGET_TYPE in ($targetTypes))"))
+            add(onCondition(groupsId?.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)"))
         }
 
         return "select * from global where ${conditions.filter { it.isNotEmpty() }.joinToString(" and")}".apply { println("FILTER QUERY -> $this") }
@@ -126,6 +134,6 @@ class FiltersRepositoryImpl @Autowired constructor(
 //            println("FILTER QUERY -> $this")
 //        }
 
-    private fun onCondition(statement: Boolean, doReturn: String): String =
-        if (statement) doReturn else ""
+    private fun onCondition(statement: Boolean?, doReturn: String): String =
+        if (statement != null && statement) doReturn else ""
 }
