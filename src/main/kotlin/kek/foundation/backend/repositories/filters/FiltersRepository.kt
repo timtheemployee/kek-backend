@@ -20,7 +20,7 @@ class FiltersRepositoryImpl @Autowired constructor(
         const val DAY = "iday"
         const val EXTENDED = "extended"
         const val COUNTRY = "country"
-        const val REGIONS = "regions"
+        const val REGIONS = "region"
         const val SUMMARY = "summary"
         const val SUCCESS = "success"
         const val SUICIDE = "suicide"
