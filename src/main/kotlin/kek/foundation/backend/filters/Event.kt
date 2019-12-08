@@ -8,8 +8,8 @@ data class Event(
     val extended: Int, //TODO( String from is_extended table )
     val country: Int, //TODO ( String from countries table )
     val region: Int, //TODO ( String from region table )
-    val latitude: String,
-    val longitude: String,
+    val latitude: Double,
+    val longitude: Double,
     val summary: String?,
     val isSuccess: Boolean,
     val isSuicide: Boolean,
