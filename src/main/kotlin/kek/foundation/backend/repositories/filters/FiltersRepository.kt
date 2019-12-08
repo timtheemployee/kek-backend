@@ -25,11 +25,11 @@ class FiltersRepositoryImpl @Autowired constructor(
         const val SUCCESS = "success"
         const val SUICIDE = "suicide"
         const val ATTACK_TYPE = "attacktype1"
-        const val TARGET_TYPE = "targettype1"
+        const val TARGET_TYPE = "targtype1"
         const val GROUP_ID = "groupid"
         const val LATITUDE = "latitude"
         const val LONGITUDE = "longitude"
-        const val KILLS_COUNT = "nkills"
+        const val KILLS_COUNT = "nkill"
     }
 
     override fun findBy(filter: Filter): List<Event> {

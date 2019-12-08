@@ -10,7 +10,7 @@ data class Event(
     val region: Int, //TODO ( String from region table )
     val latitude: String,
     val longitude: String,
-    val summary: String,
+    val summary: String?,
     val isSuccess: Boolean,
     val isSuicide: Boolean,
     val attackType: Int, // TODO ( String from attack_types table )
