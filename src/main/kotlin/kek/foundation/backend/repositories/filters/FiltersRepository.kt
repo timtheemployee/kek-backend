@@ -18,14 +18,36 @@ class FiltersRepositoryImpl @Autowired constructor(
         const val YEAR = "iyear"
         const val MONTH = "imonth"
         const val DAY = "iday"
+        const val EXTENDED = "extended"
+        const val COUNTRY = "country"
+        const val REGIONS = "regions"
+        const val SUMMARY = "summary"
+        const val SUCCESS = "success"
+        const val SUICIDE = "suicide"
+        const val ATTACK_TYPE = "attacktype1"
+        const val TARGET_TYPE = "targettype1"
+        const val GROUP_ID = "groupid"
         const val LATITUDE = "latitude"
         const val LONGITUDE = "longitude"
-        const val SUMMARY = "summary"
+        const val KILLS_COUNT = "nkills"
     }
 
     override fun findBy(filter: Filter): List<Event> {
         val result = datasource.query(
-            createQuery(filter.countryId, filter.attackTypeId, filter.regionId)
+            with(filter) {
+                createQuery(
+                    maxYear = maxYear.toString(),
+                    minYear = minYear.toString(),
+                    isExtended = joinToString(isExtended),
+                    countries = joinToString(countries),
+                    regions = joinToString(regions),
+                    isSuccess = isSuccess.toString(),
+                    isSuicide = isSuicide.toString(),
+                    attackTypes = joinToString(attackTypes),
+                    targetTypes = joinToString(targetTypes),
+                    groupsId = joinToString(groupsId)
+                )
+            }
         )
 
         val events = arrayListOf<Event>()
@@ -33,13 +55,22 @@ class FiltersRepositoryImpl @Autowired constructor(
         while (result.next()) {
             events.add(
                 Event(
-                    id = result.getString(EVENT_ID),
-                    year = result.getString(YEAR),
-                    month = result.getString(MONTH),
-                    day = result.getString(DAY),
+                    eventId = result.getString(EVENT_ID),
+                    year = result.getInt(YEAR),
+                    month = result.getInt(MONTH),
+                    day = result.getInt(DAY),
+                    extended = result.getInt(EXTENDED),
+                    country = result.getInt(COUNTRY),
+                    region = result.getInt(REGIONS),
                     latitude = result.getString(LATITUDE),
                     longitude = result.getString(LONGITUDE),
-                    summary = result.getString(SUMMARY)
+                    summary = result.getString(SUMMARY),
+                    isSuccess = result.getBoolean(SUCCESS),
+                    isSuicide = result.getBoolean(SUICIDE),
+                    attackType = result.getInt(ATTACK_TYPE),
+                    targetType = result.getInt(TARGET_TYPE),
+                    killsCount = result.getInt(KILLS_COUNT),
+                    group = result.getInt(GROUP_ID)
                 )
             )
         }
@@ -47,8 +78,37 @@ class FiltersRepositoryImpl @Autowired constructor(
         return events
     }
 
-    private fun createQuery(countryId: String?, attackTypeId: String?, regionId: String?) =
-        "select $EVENT_ID, $YEAR, $MONTH, $DAY, $LATITUDE, $LONGITUDE, $SUMMARY " +
-                "from global_table where country=${countryId ?: ""}, " +
-                "attacktype1=${attackTypeId ?: ""}, region=${regionId ?: ""};"
+    private fun joinToString(list: List<Int>): String =
+        list.joinToString(", ")
+
+    private fun joinToString(bool: Boolean): String =
+        if (bool) "1" else "0"
+
+    private fun createQuery(
+        maxYear: String,
+        minYear: String,
+        isExtended: String,
+        countries: String,
+        regions: String,
+        isSuccess: String,
+        isSuicide: String,
+        attackTypes: String,
+        targetTypes: String,
+        groupsId: String
+    ): String =
+        """
+            select * from global where 
+            ($YEAR > $minYear and $YEAR < $maxYear) and 
+            ($EXTENDED = $isExtended) and
+            ($COUNTRY in ($countries)) and
+            ($REGIONS in ($regions)) and 
+            ($SUCCESS = $isSuccess) and
+            ($SUICIDE = $isSuicide) and
+            ($ATTACK_TYPE in ($attackTypes)) and
+            ($TARGET_TYPE in ($targetTypes)) and
+            ($GROUP_ID in ($groupsId))
+            
+        """.trimIndent().apply {
+            println("FILTER QUERY -> $this")
+        }
 }
