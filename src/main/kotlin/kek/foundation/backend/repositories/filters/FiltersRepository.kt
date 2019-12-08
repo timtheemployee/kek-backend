@@ -105,7 +105,7 @@ class FiltersRepositoryImpl @Autowired constructor(
         groupsId: String?
     ): String {
         val conditions = arrayListOf<String>().apply {
-            add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR > $minYear and $YEAR < $maxYear)"))
+            add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR >= $minYear and $YEAR <= $maxYear)"))
             add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(regions?.isNotEmpty(), doReturn = "($REGIONS in ($regions))"))
@@ -118,21 +118,6 @@ class FiltersRepositoryImpl @Autowired constructor(
 
         return "select * from global where ${conditions.filter { it.isNotEmpty() }.joinToString(" and")}".apply { println("FILTER QUERY -> $this") }
     }
-//        """
-//            select * from global where
-//            ${onCondition(true, doReturn = "($YEAR > $minYear and $YEAR < $maxYear)")}
-//            ${onCondition(true, doReturn = "($EXTENDED = $isExtended)")}
-//            ${onCondition(countries.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)")}
-//            ${onCondition(regions.isNotEmpty(), doReturn = "($REGIONS in ($regions))")}
-//            ${onCondition(true, doReturn = "($SUCCESS = $isSuccess)")}
-//            ${onCondition(true, doReturn = "($SUICIDE = $isSuicide)")}
-//            ${onCondition(attackTypes.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes))")}
-//            ${onCondition(targetTypes.isNotEmpty(), doReturn = "($TARGET_TYPE in ($targetTypes))")}
-//            ${onCondition(groupsId.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)", lastLine = true)})
-//
-//        """.trimIndent().apply {
-//            println("FILTER QUERY -> $this")
-//        }
 
     private fun onCondition(statement: Boolean?, doReturn: String): String =
         if (statement != null && statement) doReturn else ""
