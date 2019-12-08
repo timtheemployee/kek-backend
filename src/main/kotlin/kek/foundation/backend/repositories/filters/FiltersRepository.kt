@@ -98,20 +98,20 @@ class FiltersRepositoryImpl @Autowired constructor(
     ): String =
         """
             select * from global where 
-            ($YEAR > $minYear and $YEAR < $maxYear) and 
-            ($EXTENDED = $isExtended) and
-            ${onCondition(countries.isNotEmpty(), doReturn = "($EXTENDED = $isExtended) and")}
-            ${onCondition(regions.isNotEmpty(), doReturn = "($REGIONS in ($regions)) and")} 
-            ($SUCCESS = $isSuccess) and
-            ($SUICIDE = $isSuicide) and
-            ${onCondition(attackTypes.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes)) and")}
-            ${onCondition(targetTypes.isNotEmpty(), doReturn = "($TARGET_TYPE in ($targetTypes)) and")}
-            ${onCondition(groupsId.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)")})
+            ${onCondition(true, doReturn = "($YEAR > $minYear and $YEAR < $maxYear)")} 
+            ${onCondition(true, doReturn = "($EXTENDED = $isExtended)")}
+            ${onCondition(countries.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)")}
+            ${onCondition(regions.isNotEmpty(), doReturn = "($REGIONS in ($regions))")} 
+            ${onCondition(true, doReturn = "($SUCCESS = $isSuccess)")}
+            ${onCondition(true, doReturn = "($SUICIDE = $isSuicide)")}
+            ${onCondition(attackTypes.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes))")}
+            ${onCondition(targetTypes.isNotEmpty(), doReturn = "($TARGET_TYPE in ($targetTypes))")}
+            ${onCondition(groupsId.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)", lastLine = true)})
             
         """.trimIndent().apply {
             println("FILTER QUERY -> $this")
         }
 
-    private fun onCondition(statement: Boolean, doReturn: String): String =
-        if (statement) doReturn else ""
+    private fun onCondition(statement: Boolean, doReturn: String, lastLine: Boolean = false): String =
+        if (statement) if(!lastLine) "$doReturn and" else doReturn else ""
 }
