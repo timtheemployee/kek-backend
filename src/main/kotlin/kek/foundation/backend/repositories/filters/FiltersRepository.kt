@@ -100,15 +100,18 @@ class FiltersRepositoryImpl @Autowired constructor(
             select * from global where 
             ($YEAR > $minYear and $YEAR < $maxYear) and 
             ($EXTENDED = $isExtended) and
-            ($COUNTRY in ($countries)) and
-            ($REGIONS in ($regions)) and 
+            ${onCondition(countries.isNotEmpty(), doReturn = "($EXTENDED = $isExtended) and")}
+            ${onCondition(regions.isNotEmpty(), doReturn = "($REGIONS in ($regions)) and")} 
             ($SUCCESS = $isSuccess) and
             ($SUICIDE = $isSuicide) and
-            ($ATTACK_TYPE in ($attackTypes)) and
-            ($TARGET_TYPE in ($targetTypes)) and
-            ($GROUP_ID in ($groupsId))
+            ${onCondition(attackTypes.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes)) and")}
+            ${onCondition(targetTypes.isNotEmpty(), doReturn = "($TARGET_TYPE in ($targetTypes)) and")}
+            ${onCondition(groupsId.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)")})
             
         """.trimIndent().apply {
             println("FILTER QUERY -> $this")
         }
+
+    private fun onCondition(statement: Boolean, doReturn: String): String =
+        if (statement) doReturn else ""
 }
