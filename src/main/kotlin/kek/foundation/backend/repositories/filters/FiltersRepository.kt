@@ -140,7 +140,7 @@ class FiltersRepositoryImpl @Autowired constructor(
             add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR >= $minYear and $YEAR <= $maxYear)"))
             add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
-            add(onCondition(regions?.isNotEmpty(), doReturn = " inner join ${regionsTable.first} on ${regionsTable.firstAndSecond()} = $GLOBAL_TABLE.$REGION where ($REGION in ($regions))"))
+            add(onCondition(regions?.isNotEmpty(), doReturn = "($REGION in ($regions))"))
             add(onCondition(isSuccess?.isNotEmpty(), doReturn = "($SUCCESS = $isSuccess)"))
             add(onCondition(isSuicide?.isNotEmpty(), doReturn = "($SUICIDE = $isSuicide)"))
             add(onCondition(attackTypes?.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes))"))
@@ -148,8 +148,18 @@ class FiltersRepositoryImpl @Autowired constructor(
             add(onCondition(groupsId?.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)"))
         }
 
-        return "select $allParams from global where ${conditions.filter { it.isNotEmpty() }.joinToString(" and")}".apply { println("FILTER QUERY -> $this") }
+        val joinConditions = arrayListOf<String>().apply {
+            add(join(countriesTable, "$GLOBAL_TABLE.$COUNTRY"))
+            add(join(attackTypesTable, "$GLOBAL_TABLE.$ATTACK_TYPE"))
+            add(join(groupsTable, "$GLOBAL_TABLE.$GROUP_ID"))
+            add(join(regionsTable, "$GLOBAL_TABLE.$REGION"))
+        }.joinToString("\n")
+
+        return "select $allParams from global \n$joinConditions\n where ${conditions.filter { it.isNotEmpty() }.joinToString(" and")}".apply { println("FILTER QUERY -> $this") }
     }
+
+    private fun join(params: Triple<String, String, String>, target: String) =
+        "inner join ${params.first} on ${params.firstAndSecond()} = $target "
 
     private fun onCondition(statement: Boolean?, doReturn: String): String =
         if (statement != null && statement) doReturn else ""
