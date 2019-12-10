@@ -68,18 +68,18 @@ class FiltersRepositoryImpl @Autowired constructor(
                     year = result.getInt(YEAR),
                     month = result.getInt(MONTH),
                     day = result.getInt(DAY),
-                    extended = result.getInt(EXTENDED),
-                    country = result.getInt(COUNTRY),
-                    region = result.getInt(REGION),
+                   // extended = result.getInt(EXTENDED),
+                    country = result.getString(countriesTable.third),
+                    region = result.getString(regionsTable.third),
                     latitude = result.getDouble(LATITUDE),
                     longitude = result.getDouble(LONGITUDE),
                     summary = result.getString(SUMMARY),
-                    isSuccess = result.getBoolean(SUCCESS),
-                    isSuicide = result.getBoolean(SUICIDE),
-                    attackType = result.getInt(ATTACK_TYPE),
+                   // isSuccess = result.getBoolean(SUCCESS),
+                    //isSuicide = result.getBoolean(SUICIDE),
+                    attackType = result.getString(attackTypesTable.third),
                     targetType = result.getInt(TARGET_TYPE),
                     killsCount = result.getInt(KILLS_COUNT),
-                    group = result.getInt(GROUP_ID)
+                    group = result.getString(groupsTable.third)
                 )
             )
         }
