@@ -20,7 +20,7 @@ class FiltersRepositoryImpl @Autowired constructor(
         const val DAY = "iday"
         const val EXTENDED = "extended"
         const val COUNTRY = "country"
-        const val REGIONS = "region"
+        const val REGION = "region"
         const val SUMMARY = "summary"
         const val SUCCESS = "success"
         const val SUICIDE = "suicide"
@@ -30,7 +30,16 @@ class FiltersRepositoryImpl @Autowired constructor(
         const val LATITUDE = "latitude"
         const val LONGITUDE = "longitude"
         const val KILLS_COUNT = "nkill"
+
+
+        const val GLOBAL_TABLE = "global"
+        val GLOBAL_COLUMNS = listOf(EVENT_ID, YEAR, MONTH, DAY, LATITUDE, LONGITUDE, SUMMARY, TARGET_TYPE, KILLS_COUNT)
     }
+
+    private val countriesTable = Triple("countries", "countrycode", "countryname")
+    private val attackTypesTable = Triple("attack_types", "attacktype", "attacktypedescription")
+    private val groupsTable = Triple("groups", "id", "group_name")
+    private val regionsTable = Triple("regions", "regioncode", "regionname")
 
     override fun findBy(filter: Filter): List<Event> {
         val result = datasource.query(
@@ -61,7 +70,7 @@ class FiltersRepositoryImpl @Autowired constructor(
                     day = result.getInt(DAY),
                     extended = result.getInt(EXTENDED),
                     country = result.getInt(COUNTRY),
-                    region = result.getInt(REGIONS),
+                    region = result.getInt(REGION),
                     latitude = result.getDouble(LATITUDE),
                     longitude = result.getDouble(LONGITUDE),
                     summary = result.getString(SUMMARY),
@@ -92,6 +101,13 @@ class FiltersRepositoryImpl @Autowired constructor(
             null
         }
 
+
+    /**
+     * global.country = countries.countrycode -> countries.countryname
+     * global.region - regions.regioncode -> regions.regionname
+     * global.attacktype1 - attack_types.attacktype -> attack_types.attacktypedescription
+     * global.groupid - groups.id -> groups.group_name
+     */
     private fun createQuery(
         maxYear: String,
         minYear: String,
@@ -104,11 +120,27 @@ class FiltersRepositoryImpl @Autowired constructor(
         targetTypes: String?,
         groupsId: String?
     ): String {
+
+        //TODO("Add correct query params")
+        val globalParams = GLOBAL_COLUMNS.map { "$GLOBAL_TABLE.$it" }
+        val countryParams = this.countriesTable.firstAndLast()
+        val attackTypeParams = this.attackTypesTable.firstAndLast()
+        val groupParams = this.groupsTable.firstAndLast()
+        val regionsParams = this.regionsTable.firstAndLast()
+
+        val allParams = arrayListOf<String>().apply {
+            addAll(globalParams)
+            add(countryParams)
+            add(attackTypeParams)
+            add(groupParams)
+            add(regionsParams)
+        }.joinToString(separator = ", ")
+
         val conditions = arrayListOf<String>().apply {
             add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR >= $minYear and $YEAR <= $maxYear)"))
             add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
-            add(onCondition(regions?.isNotEmpty(), doReturn = "($REGIONS in ($regions))"))
+            add(onCondition(regions?.isNotEmpty(), doReturn = " inner join ${regionsTable.first} on ${regionsTable.firstAndSecond()} = $GLOBAL_TABLE.$REGION where ($REGION in ($regions))"))
             add(onCondition(isSuccess?.isNotEmpty(), doReturn = "($SUCCESS = $isSuccess)"))
             add(onCondition(isSuicide?.isNotEmpty(), doReturn = "($SUICIDE = $isSuicide)"))
             add(onCondition(attackTypes?.isNotEmpty(), doReturn = "($ATTACK_TYPE in ($attackTypes))"))
@@ -116,9 +148,15 @@ class FiltersRepositoryImpl @Autowired constructor(
             add(onCondition(groupsId?.isNotEmpty(), doReturn = "($GROUP_ID in ($groupsId)"))
         }
 
-        return "select * from global where ${conditions.filter { it.isNotEmpty() }.joinToString(" and")}".apply { println("FILTER QUERY -> $this") }
+        return "select $allParams from global where ${conditions.filter { it.isNotEmpty() }.joinToString(" and")}".apply { println("FILTER QUERY -> $this") }
     }
 
     private fun onCondition(statement: Boolean?, doReturn: String): String =
         if (statement != null && statement) doReturn else ""
+
+    private fun Triple<String, String, String>.firstAndLast(): String =
+        "$first.$third"
+
+    private fun Triple<String, String, String>.firstAndSecond(): String =
+        "$first.$second"
 }
