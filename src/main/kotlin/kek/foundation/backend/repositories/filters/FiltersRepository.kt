@@ -39,7 +39,7 @@ class FiltersRepositoryImpl @Autowired constructor(
     private val attackTypesTable = Triple("attack_types", "attacktype", "attacktypedescription")
     private val groupsTable = Triple("groups", "id", "group_name")
     private val regionsTable = Triple("regions", "regioncode", "regionname")
-    private val targetTypesTable = Triple("target_types", "id", "name")
+    private val targetTypesTable = Triple("target_types", "id", "target_type")
     private val globalColumns = listOf(EVENT_ID, YEAR, MONTH, DAY, LATITUDE, LONGITUDE, SUMMARY, TARGET_TYPE, KILLS_COUNT, EXTENDED, SUICIDE, SUCCESS)
 
     override fun findBy(filter: Filter): List<Event> {
@@ -115,12 +115,12 @@ class FiltersRepositoryImpl @Autowired constructor(
         groupsId: String?
     ): String {
 
-        //TODO("Add correct query params")
         val globalParams = globalColumns.map { "$GLOBAL_TABLE.$it" }
         val countryParams = this.countriesTable.firstAndLast()
         val attackTypeParams = this.attackTypesTable.firstAndLast()
         val groupParams = this.groupsTable.firstAndLast()
         val regionsParams = this.regionsTable.firstAndLast()
+        val targetTypeParams = this.targetTypesTable.firstAndLast()
 
         val allParams = arrayListOf<String>().apply {
             addAll(globalParams)
@@ -128,15 +128,11 @@ class FiltersRepositoryImpl @Autowired constructor(
             add(attackTypeParams)
             add(groupParams)
             add(regionsParams)
+            add(targetTypeParams)
         }.joinToString(separator = ", ")
 
         val conditions = arrayListOf<String>().apply {
-            add(
-                onCondition(
-                    maxYear.isNotEmpty() && minYear.isNotEmpty(),
-                    doReturn = "($YEAR >= $minYear and $YEAR <= $maxYear)"
-                )
-            )
+            add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR >= $minYear and $YEAR <= $maxYear)"))
             add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(regions?.isNotEmpty(), doReturn = "($REGION in ($regions))"))
