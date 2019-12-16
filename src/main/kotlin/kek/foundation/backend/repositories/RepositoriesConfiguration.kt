@@ -7,6 +7,8 @@ import kek.foundation.backend.repositories.country.CountryRepository
 import kek.foundation.backend.repositories.country.CountryRepositoryImpl
 import kek.foundation.backend.repositories.filters.FiltersRepository
 import kek.foundation.backend.repositories.filters.FiltersRepositoryImpl
+import kek.foundation.backend.repositories.groups.GroupsRepository
+import kek.foundation.backend.repositories.groups.GroupsRepositoryImpl
 import kek.foundation.backend.repositories.regions.RegionRepository
 import kek.foundation.backend.repositories.regions.RegionRepositoryImpl
 import kek.foundation.backend.repositories.targettype.TargetTypeRepository
@@ -36,4 +38,8 @@ class RepositoriesConfiguration {
     @Bean
     fun provideTargetTypeRepository(datasource: Datasource): TargetTypeRepository =
         TargetTypeRepositoryImpl(datasource)
+
+    @Bean
+    fun provideGroupsRepository(datasource: Datasource): GroupsRepository =
+        GroupsRepositoryImpl(datasource)
 }
