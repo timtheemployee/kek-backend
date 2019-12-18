@@ -7,7 +7,7 @@ import java.sql.ResultSet
 class KekDatabase : Datasource {
 
     companion object {
-
+        const val PATH = "jdbc:postgresql://localhost:5432/kek_database"
     }
 
     private val connection: Connection

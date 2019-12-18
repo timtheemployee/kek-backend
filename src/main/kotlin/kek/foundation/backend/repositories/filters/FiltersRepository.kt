@@ -3,6 +3,8 @@ package kek.foundation.backend.repositories.filters
 import kek.foundation.backend.database.Datasource
 import kek.foundation.backend.filters.Event
 import kek.foundation.backend.filters.Filter
+import kek.foundation.backend.filters.MAX_YEAR
+import kek.foundation.backend.filters.MIN_YEAR
 import org.springframework.beans.factory.annotation.Autowired
 
 interface FiltersRepository {
@@ -46,8 +48,8 @@ class FiltersRepositoryImpl @Autowired constructor(
         val result = datasource.query(
             with(filter) {
                 createQuery(
-                    maxYear = maxYear.toString(),
-                    minYear = minYear.toString(),
+                    maxYear = maxYear,
+                    minYear = minYear,
                     isExtended = joinToString(isExtended),
                     countries = joinToString(countries),
                     regions = joinToString(regions),
@@ -103,8 +105,8 @@ class FiltersRepositoryImpl @Autowired constructor(
         }
 
     private fun createQuery(
-        maxYear: String,
-        minYear: String,
+        maxYear: Int?,
+        minYear: Int?,
         isExtended: String?,
         countries: String?,
         regions: String?,
@@ -132,7 +134,7 @@ class FiltersRepositoryImpl @Autowired constructor(
         }.joinToString(separator = ", ")
 
         val conditions = arrayListOf<String>().apply {
-            add(onCondition(maxYear.isNotEmpty() && minYear.isNotEmpty(), doReturn = "($YEAR >= $minYear and $YEAR <= $maxYear)"))
+            add(onCondition(true, doReturn = "($YEAR >= ${minYear ?: MIN_YEAR} and $YEAR <= ${maxYear ?: MAX_YEAR})"))
             add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
             add(onCondition(regions?.isNotEmpty(), doReturn = "($REGION in ($regions))"))
