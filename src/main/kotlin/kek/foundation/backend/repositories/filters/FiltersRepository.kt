@@ -136,7 +136,7 @@ class FiltersRepositoryImpl @Autowired constructor(
         val conditions = arrayListOf<String>().apply {
             add(onCondition(true, doReturn = "($YEAR >= ${minYear ?: MIN_YEAR} and $YEAR <= ${maxYear ?: MAX_YEAR})"))
             add(onCondition(isExtended?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
-            add(onCondition(countries?.isNotEmpty(), doReturn = "($EXTENDED = $isExtended)"))
+            add(onCondition(countries?.isNotEmpty(), doReturn = "($COUNTRY in ($countries))"))
             add(onCondition(regions?.isNotEmpty(), doReturn = "($REGION in ($regions))"))
             add(onCondition(isSuccess?.isNotEmpty(), doReturn = "($SUCCESS = $isSuccess)"))
             add(onCondition(isSuicide?.isNotEmpty(), doReturn = "($SUICIDE = $isSuicide)"))
