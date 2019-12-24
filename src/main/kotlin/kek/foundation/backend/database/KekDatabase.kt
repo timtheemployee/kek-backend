@@ -27,4 +27,10 @@ class KekDatabase : Datasource {
 
         return statement.executeQuery(queryText)
     }
+
+    override fun execute(query: String): Boolean {
+        val statement = connection.createStatement()
+
+        return statement.execute(query)
+    }
 }

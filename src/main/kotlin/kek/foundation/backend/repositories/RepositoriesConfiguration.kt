@@ -13,6 +13,9 @@ import kek.foundation.backend.repositories.regions.RegionRepository
 import kek.foundation.backend.repositories.regions.RegionRepositoryImpl
 import kek.foundation.backend.repositories.targettype.TargetTypeRepository
 import kek.foundation.backend.repositories.targettype.TargetTypeRepositoryImpl
+import kek.foundation.backend.repositories.tracing.TracingRepository
+import kek.foundation.backend.repositories.tracing.TracingRepositoryImpl
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -42,4 +45,8 @@ class RepositoriesConfiguration {
     @Bean
     fun provideGroupsRepository(datasource: Datasource): GroupsRepository =
         GroupsRepositoryImpl(datasource)
+
+    @Bean
+    fun provideTraceRepository(datasource: Datasource): TracingRepository =
+        TracingRepositoryImpl(datasource)
 }
